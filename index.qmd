@@ -3,6 +3,7 @@ title: "ABACBS/BiocAsia Workshop Schedule 2025"
 editor: source
 format: 
   html:
+    page-layout: full
     title-block-banner: https://images.squarespace-cdn.com/content/v1/5423875be4b03f0c482a58c4/421bf838-6118-4ae6-b7d9-b556072d4524/ABACBS+2025+Banner+-+10+years+of+ABACBS.png
 knitr: 
   opts_chunk: 
@@ -129,7 +130,7 @@ The ABACBS25 Conference have joined with BiocAsia to organise two full days of w
 All workshops will be held in [Festival Tower](https://maps.app.goo.gl/gwrbmTE6J4puUPum9) overlooking the Festival Theatre and the River Torrens.
 
 All are welcome, including those who have attended the ABACBS Conference and those who simply wish to attend some high-quality training workshops.
-Registrations can be made via the [ABACBS conference/workshop website](https://www.abacbs.org/abacbs-2025-workshops)
+Registrations can be made via the main [ABACBS conference/workshop website](https://www.abacbs.org/abacbs-2025-workshops) or via the [BiocAsia website](https://biocasia2025.bioconductor.org/schedule/)
 
 Catering will be provided on both days in a common area
 
