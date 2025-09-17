@@ -1,0 +1,1195 @@
+---
+title: "ABACBS/BiocAsia Workshop Schedule 2025"
+editor: source
+format: 
+  html:
+    title-block-banner: https://images.squarespace-cdn.com/content/v1/5423875be4b03f0c482a58c4/421bf838-6118-4ae6-b7d9-b556072d4524/ABACBS+2025+Banner+-+10+years+of+ABACBS.png
+knitr: 
+  opts_chunk: 
+    echo: false
+    include: true
+    eval: true
+    warning: false
+    message: false
+---
+
+![](https://images.squarespace-cdn.com/content/v1/5423875be4b03f0c482a58c4/421bf838-6118-4ae6-b7d9-b556072d4524/ABACBS+2025+Banner+-+10+years+of+ABACBS.png?format=2500w)
+
+```{css css}
+.workshop-detail {
+  padding: 16px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  margin-top: 8px;
+  text-align: left;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+td, th {
+  border: 1px solid black;
+  padding: 8px;
+  text-align: center;
+  font-size: 14px;
+}
+```
+
+
+```{r pkg}
+library(tidyverse)
+library(reactable)
+library(htmltools)
+```
+
+```{r util-funs}
+drop_filter <- function(values, name, id = NULL, sort = TRUE) {
+  if (sort) values <- sort(values)
+  tags$select(
+    # Set to undefined to clear the filter
+    onchange = sprintf(
+      "Reactable.setFilter('%s', '%s', event.target.value || undefined)",
+      id, name
+    ),
+    # "All" has an empty value to clear the filter, and is the default option
+    tags$option(value = "", "All"),
+    lapply(unique(values), tags$option),
+    "aria-label" = sprintf("Filter %s", name),
+    style = "width: 100%; height: 28px;"
+  )
+}
+process_presenters <- function(names_vec) {
+  pre <- ", "
+  processed <- map(
+    seq_along(names_vec), 
+    function(i) {
+      if (i == 1) pre <- ""
+      base_name <- str_replace(names_vec[[i]], "[0-9,]+$", "")
+      number <- str_extract(names_vec[[i]], "[0-9,]+$")
+      tagList(pre, base_name, tags$sup(number))
+    }
+  )
+  processed
+}
+row_details <- function(index){
+  data <- df[index,]
+  detail <- div(
+    class = "workshop-detail",
+    div(
+      class = "workshop-title", h2(data$Title), 
+    ),
+    div(
+      class = "workshop-presenter",
+      h3("Presenter(s)"),
+      data$Presenter %>%
+        unlist() %>%
+        process_presenters() %>%
+        tagList()
+    ),
+    div(
+      class = "workshop-institution",
+      h3("Presenter Organisation(s)"),
+      tags$ol(
+        lapply(unlist(data$Institution), tags$li)
+      )
+    ),
+    div(
+      class = "workshop-schedule",
+      h3("Workshop Schedule"),
+      format(data$Start, "%A %d %B %Y, %I:%M%p"), " to ", format(data$End, "%I:%M%p"),
+      tags$p(
+        ifelse(
+          data$Duration == 1.5,
+          paste("This will be a 90 minute workshop without breaks"), 
+          paste(
+            "This will be a 3 hour workshop with a",
+            as.numeric(data$Break, units = "minutes"),
+            "minute break"
+          )
+        )
+      )
+    ),
+    div(
+      class = "workshop-abstract",
+      h3("Workshop Outline"), data$Abstract
+    ),
+    div(
+      class = "workshop-stream",
+      h3("Workshop Stream(s)"),
+      tags$ul(
+        lapply(unlist(data$Stream), tags$li)
+      )
+    )
+  )
+  detail
+}
+```
+
+The ABACBS25 Conference have joined with BiocAsia to organise two full days of workshops immediately following the main conference.
+All workshops will be held in [Festival Tower](https://maps.app.goo.gl/gwrbmTE6J4puUPum9) overlooking the Festival Theatre and the River Torrens.
+
+Catering will be provided on both days in a common area
+
+- 10:30-11:00am Morning Tea
+- 12:30-1:30pm Lunch
+- 3:00-3:30pm Afternoon Tea
+
+Please find an outline of the currently scheduled sessions immediately below, along with a [browsable table](#full-table-with-abstracts) including all abstracts
+
+
+
+## Complete Workshop Schedule
+
+### Thursday 27th November
+
+<table>
+  <tr>
+    <th></th>
+    <th colspan="3" style="background-color: #b6d0e2;"> ABACBS</th>
+    <th colspan="2" style="background-color: #e2c8b6;"> BiocAsia</th>
+  </tr>
+  <tr>
+    <th> Time</th>
+    <th style="background-color: #b6bae2;"> Professional Bioinformatics<br>(Room 506)</th>
+    <th style="background-color: #bae2b6;"> Long Reads<br>(Room 310)</th>
+    <th style="background-color: #b6e2de;"> Scalable Workflows & Compute Infrastructure<br>(Room 415)</th>
+    <th style="background-color: #e2deb6;"> Microbiome & Metagenomics<br>(Room 416)</th>
+    <th style="background-color: #e2b6ba;"> Single-Cell and Spatial Transcriptomics<br>(Room 605)</th>
+  </tr>
+  <tr>
+    <th> 8:30</th>
+    <th colspan="5"> Welcome to The ABACBS/BiocAsia Workshops (Room 605)</th>
+  </tr>
+  <tr>
+    <th> 9:00</th>
+    <td rowspan="2" style="background-color: #b6bae2;"> Introduction to Agentic Workflows</td>
+    <td style="background-color: #bae2b6;"> Introduction to Oxford Nanopore</td>
+    <td rowspan="2" style="background-color: #b6e2de;"> Leveraging peak Australian compute to enable workflows for predictive structural biology at scale</td>
+    <td rowspan="2" style="background-color: #e2deb6;"> Orchestrating Microbiome Analysis with Bioconductor</td>
+    <td rowspan="2" style="background-color: #e2b6ba;"> Unlocking single-cell spatial omics analyses with SCDNEY: Characterising spatial relationships between cells</td>
+  </tr>
+  <tr>  
+    <th> 11:00</th>
+    <td style="background-color: #bae2b6;">Using long reads to analyse genetic variation</td>
+  </tr>
+  <tr>  
+    <th>12:30</th>
+    <th colspan="5">Lunch</th>
+  </tr>  
+  <tr>
+    <th> 1:30</th>
+    <td rowspan="2"> </td>
+    <td style="background-color: #e2b6ba;"> <strong>Single-Cell and Spatial Transcriptomics<br></strong>DCS Cloud: Revolutionizing Genomics Research through Integrated, AI-Driven Solutions </td>
+    <td rowspan="2" style="background-color: #b6e2de;"> Client-side bioinformatics: building robust bioinformatics tools for the browser with WebAssembly</td>
+    <td rowspan="2" style="background-color: #e2deb6;"> Making Sense of Metagenomes</td>
+    <td style="background-color: #e2b6ba;"> Streamline spatial and transcriptomic analysis with tidyomics</td>
+  </tr>
+  <tr>
+    <th> 3:30</th>
+    <td style="background-color: #e2b6ba;"> A taster of in situ spatial transcriptomics experimental analysis </td>
+    <td rowspan="2" style="background-color: #e2b6ba;"> Spatial clustering with ClustSIGNAL – a spatial transcriptomics data analysis method</td>
+  </tr>  
+</table>
+
+### Friday 28th November
+
+<table>
+  <tr>
+    <th></th>
+    <th style="background-color: #b6d0e2;"> ABACBS</th>
+    <th colspan="2" style="background-color: #e2c8b6;"> BiocAsia</th>
+  </tr>
+  <tr>
+    <th> Time</th>
+    <th style="background-color: #b6d0e2;"> AI and Machine Learning in Genomics<br>(Room 416)</th>
+    <th style="background-color: #e2deb6;"> Single Cell Omics<br>(Room 309)</th>
+    <th style="background-color: #e2b6ba;"> Spatial Transcriptomics<br>(Room 505)</th>
+  </tr>
+  <tr>
+    <th> 9:00</th>
+    <td style="background-color: #b6d0e2;"> Decoding Biological Data with Random Matrix Theory: Applications in Single-Cell Transcriptomics and Viral Vaccine Design</td>
+    <td style="background-color: #e2deb6;"> ATAClone: cancer clone identification and copy number estimation from single-cell ATAC-seq</td>
+    <td rowspan="2" style="background-color: #e2b6ba;"> Spatial transcriptomics normalisation and phenotyping using SpaNorm, PhiSpace and jazzPanda</td>
+  </tr>
+  <tr>  
+    <th> 11:00</th>
+    <td style="background-color: #b6d0e2;"> (To Be Confirmed)<br>Identifying Biomarkers of Drug Sensitivity and Predicting Treatment Responsive Colon Cancer Patients</td>
+    <td style="background-color: #e2deb6;"> Advanced Marker Identification and Data Analysis with mastR and smartid</td>
+  </tr>
+  <tr>  
+    <th>12:30</th>
+    <th colspan="5">Lunch</th>
+  </tr>  
+  <tr>
+    <th> 1:30</th>
+    <td style="background-color: #b6d0e2;"> (To Be Confirmed)<br>Identifying Biomarkers of Drug Sensitivity and Predicting Treatment Responsive Colon Cancer Patients (continued)</td>
+    <td style="background-color: #b6e2de;"> <strong>Scalable Workflows & Compute Infrastructure<br></strong>Interpreting benchmarking results with BenchmarkInsights</td>
+    <td style="background-color: #e2b6ba;"> Interrogating spatial transcriptomics: hands-on spatial domain, neighborhood & density analysis with DOMINO, hoodscanR and scider</td>
+  </tr>
+  <tr>
+    <th> 3:00</th>
+    <th colspan="5"> Closing Comments (Room 505)</th>
+  </tr>
+  <tr>  
+    <th>3:30</th>
+    <th colspan="5">Afternoon Tea</th>
+  </tr>  
+</table>
+
+## Full Table With Abstracts
+
+
+```{r data}
+raisa <- list(
+  Start = "2025-11-27 09:00:00",
+  End = "2025-11-27 12:30:00",
+  Break = 30,
+  Title = "Introduction to agentic workflows",
+  Presenter = list(
+    c("Raisa Hashem1", "Jill Freyne1", "Emma Arrigo1")
+  ),
+  Institution = list("Amazon Web Services"),
+  Domain = "ABACBS",
+  Stream = list(
+    c("Professional Bioinformatics", "AI and Machine Learning in Genomics", "Production Deployments")
+  ),
+  Abstract = list(
+    tags$body(
+      p("
+      Agentic Workflows enable large language models (LLMs) to act autonomously, 
+      performing tasks or providing assistance on behalf of users. This mini 
+      hackathon will introduce the participants to agentic development techniques. 
+      They’ll have access to industry leading tools that accelerate development in 
+      the hands-on lab. The facilitators will demonstrate how to get the most out 
+      of this emerging tech, then provide guidance as participants build their own 
+      application. Come with your own blue-sky idea, and bring it to life. 
+      Or just work through the guided examples. The choice is yours."
+      ),
+      p(
+        strong("Who should attend"), 
+        ": Engineers, architects, and scientists who want to see what 
+      this whole “vibe coding” thing is about (and try it for themselves)."
+      )
+    )
+  )
+)
+ont1 <- list(
+  Start = "2025-11-27 09:00:00",  
+  End = "2025-11-27 10:30:00", 
+  Break = 0,
+  Title = "Introduction to Nanopore",
+  Presenter = list("Andre Sim1"), 
+  Institution = list("Oxford Nanopore Technologies"), 
+  Domain = "ABACBS",
+  Stream = list(c("Long Read Technology")), 
+  Abstract = list(
+    tags$body(
+      tags$ul(
+        tags$li("Intro to Nanopore data and Epi2me"),
+        tags$li("What are the data types"),
+        tags$li(
+          "Dorado + rebasecalling, demux (CPU can be used for dorado rebasecalling 
+        for a small number of reads, we will provide raw data to basecall and demux)"
+        ),
+        tags$li("What is a squiggle?"),
+        tags$li("Event alignment, and visualisation of raw signal data"),
+        tags$li("How to quality control long-read data. Provide data to review and QC")
+      )
+    )
+  ) 
+)
+ont2 <- list(
+  Start = "2025-11-27 11:00:00",  
+  End = "2025-11-27 12:30:00", 
+  Break = 0,
+  Title = "Using long reads to analyse genetic variation", 
+  Presenter = list("Andre Sim1"), 
+  Institution = list("Oxford Nanopore Technologies"), 
+  Domain = "ABACBS",
+  Stream = list(c("Long Read Technology")), 
+  Abstract = list(
+    tags$body(
+      p(
+        "Attendees are expected to have attended the Introduction to Nanopore workshop run immediately preceding this one"
+      ),
+      tags$ul(
+        tags$li("Participants to run subsampled human data to run through wf-human-variation via command line"),
+        tags$li("Discussion on individual workflow components and how and which can be applied to different organisms"),
+        tags$li("We will share output of the workflow from a full human dataset for downstream analysis"),
+        tags$li("How to find variants of interest in vcf, SVs, CNVs via the report and IGV"),
+        tags$li("Visualise genomic methylation")
+      )
+    )
+  ) 
+)
+mgi <- list(
+  Start = "2025-11-27 13:30:00",
+  End = "2025-11-27 15:00:00", 
+  Break = 0,
+  Title = "DCS Cloud: Revolutionizing Genomics Research through Integrated, AI-Driven Solutions",
+  Presenter = list(
+    c("Karthik Pullela1", "Mingyan Fang1", "Melvin Xiaochun Li1")
+  ),
+  Institution = list("MGI"),
+  Domain = "ABACBS",
+  Stream = list(
+    c("Single-Cell Omics", "Spatial Transcriptomics", "AI and Machine Learning in Genomics")
+  ),
+  Abstract = list(
+    tags$body(
+      tags$h3("Theme:"),
+      tags$p(
+        "This workshop directly aligns with the conference theme of Single-Cell & 
+      Spatial Omics, with a focus on novel analysis techniques, streamlined 
+      workflows, and practical approaches for interpreting multi-omics data 
+      including spatiotemporal omics, single-cell and large-scale human cohorts."
+      ),
+      tags$h3("Abstract:"),
+      tags$p(
+        "As the complexity and volume of omics data explode, researchers face 
+      increasingly severe bottlenecks in data processing, cross-team 
+      collaboration, and analytical reproducibility. This workshop introduces ", 
+      tags$strong(
+        "DCS Cloud (DNA, Cell Omics and SpatialOmics)"
+      ), 
+      " an AI-driven, cloud-based platform built to overcome these challenges and
+      democratize access to advanced analysis pipelines for genomics, single-cell,
+      and spatial omics research. Through a combination of expert talks and a 
+      practical training, attendees will gain a comprehensive understanding of 
+      how DCS Cloud’s integrated framework (featuring automated pipelines, 
+      collaborative environments, and high-resolution spatial visualization 
+      tools) can transform their research productivity."
+      ),
+      tags$h3("Workshop Agenda and Speakers:"),
+      tags$ul(
+        tags$li(
+          "Introduction to DCS Cloud and Stereo-seq (20 min) ",
+          tags$em("Dr. Karthik Pullela, Application Scientist, MGI Australia "),
+          "Overview of the platform’s full-stack architecture, its applications in
+        cohort studies and brain science, and key spatial technologies such as 
+        Stereoseq and StereoMap"
+        ),
+        tags$li(
+          "Applied User Cases in Population Genomics and 3D Spatial Brain Mapping (30 min) ",
+          tags$em(
+            "Dr. Mingyan Fang, Chief Scientist, BGI Research APAC "
+          ),
+          "Case studies illustrating the transformative use of DCS Cloud in 
+        projects such as the China Kadoorie Biobank (CKB) and 3D spatial brain mapping."
+        ),
+        tags$li(
+          "Hands-On Training: DCS Cloud for Single-Cell and Spatial Data Analysis – Part 1 (40 min) ",
+          tags$em(
+            "Melvin Xiaochun Li, Field Bioinformatics Scientist, MGI APAC "
+          ),
+          "A guided walkthrough of the platform’s code-free analytical workflows,
+        interactive visualization tools, and AI-driven automation features for 
+        single-cell and spatial data."
+        )
+      )
+    )
+  )
+)
+sarah <- list(
+  Start = "2025-11-27 15:30:00", 
+  End = "2025-11-27 17:00:00", 
+  Break = 0,
+  Title = "A taster of in situ spatial transcriptomics experimental analysis",
+  Presenter = list(
+    c("Sarah Williams1", "Magda Antczak1", "Nick Matigan1")
+  ),
+  Institution = list("QCIF"),
+  Domain = "ABACBS",
+  Stream = list(c("Spatial Transcriptomics")),
+  Abstract = list(
+    tags$body(
+      tags$p(
+        "
+      This workshop aims to provide a practical introduction to using spatial 
+      omics analysis to answer research questions; specifically, how to tackle 
+      a comparative analysesbetween groups.
+      "
+      ),
+      tags$p(
+        "
+      We will start with a pre-processed in situ spatial dataset and undertake 
+      some basic differential expression, look at differences of proportions of 
+      celltypes, and exploratory plotting. We will work in R, using mostly 
+      Bioconductor tools. We will use a cosMx dataset, but approaches would be 
+      applicable to other technologies like Xenium or vizgen.
+      "
+      ),
+      tags$p(
+        "
+      Along the way we will discuss considerations specific to spatial analyses, 
+      how to scale it up to a full analysis, and how to assess our results. We 
+      will also introduce spatial sampler as a resource for examples and codes 
+      snippets for analyses on spatial datasets.
+      "
+      ),
+      tags$p(
+        "
+      This workshop is aimed at newcomers to spatial analyses. Basic R skills 
+      are required, a familiarity with single cell analysis is helpful but not essential.
+      "
+      )
+    )
+  )
+)
+biocommons <- list(
+  Start = "2025-11-27 09:00:00",
+  End = "2025-11-27 12:30:00", 
+  Break = 30, 
+  Title = "Leveraging peak Australian compute to enable workflows for predictive structural biology at scale", 
+  Presenter = list(
+    c(
+      "Johan Gustafsson1", "Ziad Al Bkhetan1", "Thomas Litfin2", 
+      "Sarah Beecroft3", "Georgie Samaha4", "Farah Zaib Khan1"
+    )
+  ), 
+  Institution = list(
+    c(
+      "Australian BioCommons, University of Melbourne", 
+      "University of New South Wales, Australian BioCommons",
+      "Pawsey Supercomputing Research Centre",
+      "Sydney Informatics Hub, University of Sydney"
+    )
+  ), 
+  Domain = "ABACBS",
+  Stream = list(c("Scalable Workflows & Compute Infrastructure")), 
+  Abstract = list(
+    tags$body(
+      "
+      Deep learning for structural biology has numerous applications, ranging 
+      from basic research through to clinical application. A key challenge with 
+      these approaches is accessibility, and much work is currently being 
+      conducted to develop computational workflows to improve this access. 
+      However, building, executing, and sharing workflows is challenging. The 
+      difficulty only increases when implementing novel approaches like deep 
+      learning, and even more so when moving these workflows to national
+      infrastructure to operate at scale. Some of the challenges include knowing 
+      how to develop a workflow to optimise use of these large compute systems, 
+      how to configure and deploy workflows that can efficiently employ both CPU 
+      and GPU, and how to share the workflows created so that others can find,
+      understand, reuse, and ultimately cite the workflow. This workshop will 
+      examine these challenges from the perspective of a workflow’s life cycle, 
+      and in doing so provide both theory and hands-on activities that will 
+      support bioinformaticians to develop, execute, and share computational 
+      workflows for structural biology at scale.
+      "
+    )
+  )
+)
+wirth <- list(
+  Start = "2025-11-27 13:30:00",
+  End = "2025-11-27 17:00:00", 
+  Break = 30,
+  Title = "Client-side bioinformatics: building robust  bioinformatics tools for the browser with  WebAssembly",
+  Presenter = list(
+    c("Wytamma Wirth1,2", "Andrew Lonsdale3,4,5", "Torsten Seemann1,2")
+  ),
+  Institution = list(
+    c(
+      "Department of Microbiology and Immunology, University of Melbourne, The Peter Doherty Institute for Infection and Immunity, Victoria, Australia",
+      "Centre for Pathogen Genomics, University of Melbourne, Victoria, Australia",
+      "Peter MacCallum Cancer Centre, Melbourne, 3000, Australia",
+      "Sir Peter MacCallum Department of Oncology, The University of Melbourne,  Parkville, 3010, Australia",
+      "Murdoch Children’s Research Institute, Parkville, 3052, Australia"
+    )
+  ),
+  Domain = "ABACBS",
+  Stream = list(
+    c("Scalable Workflows & Compute Infrastructure", "Professional Bioinformatics")
+  ),
+  Abstract = list(
+    tags$body(
+      tags$p(
+        "
+        Web servers are a common way to deploy bioinformatics software to relieve 
+        end users of  installation issues. Unfortunately, these servers are 
+        frequently unmaintained a few years  after publication, and they may sit 
+        idle most of the time – if they are still available at all. Sending data 
+        to external servers can also raise confidentiality concerns for clinical 
+        or sensitive datasets.
+        "
+      ),
+      tags$p(
+        "
+        WebAssembly (Wasm) offers solutions to these 
+        issues by running computations client‑side in the browser. Wasm is now 
+        mature in the web ecosystem and is  gaining traction in bioinformatics. 
+        In this workshop we will provide an overview of Wasm  and the surrounding 
+        tooling, with examples of real‑world bioinformatics deployments. In the 
+        second half, participants will build and deploy a complete bioinformatics 
+        Wasm application that delivers state‑of‑the‑art analyses in the browser 
+        with zero server costs.  We will also cover practical limits and 
+        trade‑offs, including performance, memory,  threading, GPU acceleration, 
+        data handling, and hosting options.
+        "
+      )
+    )
+  )
+)
+borman <- list(
+  Start = "2025-11-27 09:00:00",
+  End = "2025-11-27 12:30:00",
+  Break = 30,
+  Title = "Orchestrating Microbiome Analysis with Bioconductor",
+  Presenter = list(
+    c("Tuomas Borman1", "Leo Lahti1")
+  ),
+  Institution = list("University of Turku, Finland"),
+  Domain = "BiocAsia",
+  Stream = list(
+    c("Metagenomics & Microbiome analyses")
+  ),
+  Abstract = list(
+    tags$body(
+      p(
+        "
+        Because of the complex nature of microbiome data, robust and reproducible
+        computational approaches are essential. This workshop introduces the
+        latest advances in microbiome analysis within Bioconductor, focusing on
+        the mia (Microbiome Analysis) framework, built on the
+        (Tree)SummarizedExperiment data container. Participants will gain
+        hands-on experience with data handling, visualization, and analysis
+        through a practical case study.
+        "
+      ),
+      p(
+        "
+        The workshop will also introduce the Orchestrating Microbiome Analysis
+        with Bioconductor online book (https://microbiome.github.io/OMA), a
+        freely available resource that promotes best practices and supports
+        adoption of the ecosystem. Together, these resources enable scalable,
+        transparent, and community-driven microbiome data science.
+        "
+      )
+    )
+  )
+)
+ryan <- list(
+  Start = "2025-11-27 13:30:00",
+  End = "2025-11-27 17:00:00",
+  Break = 30,
+  Title = "Making Sense of Metagenomes",
+  Presenter = list(
+    c("Feargal Ryan1", "Calum Walsh2", "Geraldine Kong2", "Vini Salazar2,3", "Don Teng4")
+  ),
+  Institution = list(
+    c(
+      "Flinders University", "University of Melbourne", "Melbourne Bioinformatics", 
+      "Metabolomics SA"
+    )
+  ),
+  Domain = "BiocAsia",
+  Stream = list(
+    c("Metagenomics & Microbiome analyses")
+  ),
+  Abstract = list(
+    tags$body(
+      p(
+      "
+      This workshop will provide a hands-on introduction to current best 
+      practices in metagenomic data analysis. Attendees will be guided from 
+      theory through to analysis, visualisation, and biological interpretation 
+      using public datasets and R Markdown notebooks. The workshop is divided 
+      into four structured, practical blocks:
+      "
+      ),
+      tags$ul(
+        tags$li(
+          tags$strong("Block 1 – Introduction to Metagenomic Analyses: "),
+          "A theoretical session covering core concepts, the history of metagenomics, key methodologies, and landmark studies in the field."
+        ),
+        tags$li(
+          tags$strong(
+            "Block 2 – Analysing Metagenomic Data with Nextflow and nf-core: "
+          ),
+          "Hands-on session running two nf-core pipelines—mag and taxprofiler—for metagenome assembly and profiling."
+        ),
+        tags$li(
+          tags$strong(
+            "Block 3 – Data Exploration and Interpretation with Bioconductor: "
+          ),
+          "Practical session using pre-computed outputs in R to explore and visualise metagenomic datasets"
+        ),
+        tags$li(
+          tags$strong("Block 4 – Integrating Metagenomics and Metabolomics: "),
+          "Hands-on analysis of pre-computed multi-omics data in R, with an introduction to metabolomics and integrative methods."
+        )
+      ),
+      p(
+      "
+      This workshop brings together instructors from South Australia and 
+      Victoria with expertise spanning microbiome analysis, metabolomics, and 
+      bioinformatics education. All materials will be developed using Melbourne 
+      Bioinformatics training templates and made publicly available post-workshop.
+      "
+      )
+    )
+  )
+)
+scdney <- list(
+  Start = "2025-11-27 09:00:00",
+  End = "2025-11-27 12:30:00",
+  Break = 30,
+  Title = "Unlocking single-cell spatial omics analyses with SCDNEY: Characterising spatial relationships between cells",
+  Presenter = list(
+    c(
+      "Daniel Kim1,2,4", "Farhan Ameen1,3,5", "Lijia Yu1,5", 
+      "Shreya Rajesh Rao1,3,5", "Ellis Patrick1,2,3,5", "Jean Yang1,3,5"
+    )
+  ),
+  Institution = list(
+    c(
+      "Sydney Precision Data Science Centre, The University of Sydney, NSW, Australia",
+      "Computational Systems Biology Unit, Children’s Medical Research Institute, Westmead, NSW, Australia",
+      "Charles Perkins Centre, The University of Sydney, NSW, Australia",
+      "School of Medical Sciences, Faculty of Medicine and Health, The University of Sydney, NSW, Australia",
+      "School of Mathematics and Statistics, The University of Sydney, NSW, Australia"
+    )
+  ),
+  Domain = "BiocAsia",
+  Stream = list(
+    c("Spatial Transcriptomics")
+  ),
+  Abstract = list(
+    tags$body(
+      p(
+        "
+        Spatial omics technologies such as IMC, PCF, Xenium and CosMx are revolutionising our understanding of
+        cellular organisation and function. These platforms generate complex datasets that can uncover disease
+        relevant biology but only if the data are analysed and interpreted appropriately. Each step of the analysis
+        pipeline involves key decisions, from segmentation strategies to cell type annotation and spatial statistics.
+        These choices can strongly influence biological conclusions, yet they are often made without fully
+        understanding their assumptions, limitations or alternatives.
+        "
+      ),
+      p(
+        "
+        In this workshop we will introduce an analytical framework built around our SCDNEY suite of Bioconductor
+        packages, many of which are already widely used in the ABACBS community. We will demonstrate how
+        simpleSeg, scHOT, FuseSOM, scClassify, spicyR, lisaClust, statial, scFeatures and ClassifyR can be combined into
+        flexible pipelines. Beyond simply teaching how to run the tools, we will guide participants to critically
+        evaluate:
+        "
+      ),
+      tags$ul(
+        tags$li(
+          "Initial exploration of spatial data, including quality assessment driven by questions such as:",
+          tags$ul(
+            tags$li("Does the study contain sufficient information for downstream analysis?"),
+            tags$li("Are there cells or samples that should be filtered out or down-weighted?"),
+            tags$li("Which segmentation approaches are best suited for their data and why?")
+          )
+        ),
+        tags$li(
+          "How normalisation and cell type identification choices can bias downstream analyses"
+        ),
+        tags$li(
+          "What constitutes robust evidence of cell–cell interactions or microenvironmental effects"
+        ),
+        tags$li(
+          "How to select appropriate spatial statistical tests and interpret their outputs"
+        ),
+        tags$li(
+          "Identification of cohort heterogeneity and its implications via ClassifyR. Here we address:",
+          tags$ul(
+            tags$li("What modalities are most informative for which subcohort ?"),
+            tags$li("What are the characteristics of subcohorts that are separated by predictability ?")
+          )
+        )
+      )
+    )
+  )
+)
+hutch <- list(
+  Start = "2025-11-27 13:30:00",
+  End = "2025-11-27 15:00:00",
+  Break = 0,
+  Title = "Streamline spatial and transcriptomic analysis with tidyomics",
+  Presenter = list(
+    c("William Hutchison1,2")
+  ),
+  Institution = list(
+    c(
+      "Walter and Eliza Hall Institute of Medical Research, Parkville, Australia",
+      "Department of Medical Biology, University of Melbourne, Parkville, Australia"
+    )
+  ),
+  Domain = "BiocAsia",
+  Stream = list(
+    c("Spatial Transcriptomics")
+  ),
+  Abstract = list(
+    tags$body(
+      p(
+        "The tidyomics software ecosystem aims to bring the tidy R paradigm to 
+        BioConductor. This workshop will introduce participants to tidyomics, 
+        focusing on the tidySpatialExperiment and tidySingleCellExperiment 
+        packages. We will begin with a brief overview of the 
+        SingleCellExperiment class, the SpatialExperiment class and the 
+        tidyverse ecosystem. We will then examine how tidyomics can enable tidy 
+        omics data manipulation and plotting."
+        ), 
+      p(
+        "We will conclude by exploring additional utilities offered by 
+        tidyomics, which aim to simplify complex and interesting analysis tasks. 
+        Through this workshop, participants will be empowered to streamline 
+        their own spatial and transcriptomic workflows."
+      )
+    )
+  )
+)
+pratibha <- list(
+  Start = "2025-11-27 15:30:00", 
+  End = "2025-11-27 17:00:00", 
+  Break = 0,
+  Title = "Spatial clustering with ClustSIGNAL – a spatial transcriptomics data analysis method",
+  Presenter = list(
+    c("Pratibha Panwar1,2,3", "Shila Ghazanfar1,2,3")
+  ),
+  Institution = list(
+    c(
+      "School of Mathematics and Statistics, University of Sydney",
+      "Sydney Precision Data Science Centre, University of Sydney",
+      "Charles Perkins Centre, University of Sydney"
+    )
+  ),
+  Domain = "BiocAsia",
+  Stream = list(c("Spatial Transcriptomics")),
+  Abstract = list(
+    tags$body(
+      tags$p(
+        "
+        ClustSIGNAL is cell-type spatial clustering method for high-resolution 
+        spatial transcriptomics data. It uses both the gene expression and 
+        spatial locations of cells to group them into clusters. 
+        ClustSIGNAL aims to:
+        "
+      ),
+      tags$ol(
+        tags$li(
+          "overcome data sparsity using an adaptive smoothing approach that 
+          uses cell-specific weights based on the heterogeneity level (entropy) 
+          of a cell’s neighbourhood and"
+          ),
+        tags$li(
+          "embed spatial context information into the gene expression 
+          generating a transformed, adaptively smoothed expression matrix that 
+          is used for clustering."
+        )
+      ),
+      tags$p(
+        "
+          In this workshop, we will discuss how ClustSIGNAL works as a spatial 
+          clustering method, and how it can be run on R. We will also cover 
+          various parameters for ClustSIGNAL, assess cluster relevance through 
+          accuracy metrics and marker genes, and explore entropy and 
+          neighbourhood data generated by ClustSIGNAL.
+        "
+      )
+    )
+  )
+)
+louie <- list(
+  Start = "2025-11-28 09:00:00",  
+  End = "2025-11-28 10:30:00", 
+  Break = 0,
+  Title = "Decoding Biological Data with Random Matrix Theory: Applications in Single-Cell Transcriptomics and Viral Vaccine Design",
+  Presenter = list(
+    c("Syed Faraz Ahmed1", "Ahmed Abdul Quadeer1", "Raymond Louie2")
+  ),
+  Institution = list(
+    c(
+      "Department of Electrical and Electronic Engineering, The University of Melbourne",
+      "School of Computer Science and Engineering, University of New South Wales"
+    )
+  ),
+  Domain = "ABACBS",
+  Stream = list(
+    c("Single-Cell Omics", "AI and Machine Learning in Genomics")
+  ),
+  Abstract = list(
+    tags$body(
+      tags$p(
+      "This workshop introduces participants to Random Matrix Theory (RMT) as a 
+      powerful tool for denoising biological data and uncovering meaningful 
+      structure in noisy covariance matrices, which is applicable across a wide 
+      range of biological datasets. While examples will focus on single-cell 
+      RNA-sequencing (scRNA-seq) and viral sequence data, the techniques are 
+      broadly relevant to any domain where estimating correlation or 
+      co-variation matters, including bulk transcriptomics, proteomics, and 
+      microbiome studies."
+      ),
+      tags$p(
+        "Participants will learn how to integrate RMT into standard workflows, 
+        such as identifying gene signatures of biological processes from 
+        scRNA-seq and discovering mutationally vulnerable residues in viral 
+        proteins to design efficient vaccines. Through an accessible overview, 
+        live coding in R, and hands-on analysis of real-world datasets, 
+        attendees will gain practical experience in spectral denoising and 
+        inherent structure detection. By workshop's end, attendees will be 
+        confident to apply these generalisable denoising methods to their own
+        research problems."
+      )
+    )
+  )
+)
+elitok <- list(
+  Start = "2025-11-28 11:00:00",  
+  End = "2025-11-28 15:00:00", 
+  Break = 60,
+  Title = "(TO BE CONFIRMED) Identifying Biomarkers of Drug Sensitivity and Predicting Treatment Responsive Colon Cancer Patients",
+  Presenter = list(c("Bilge Elitok1")),
+  Institution = list(c("University of Eastern Finland, Institute of Biomedicine")),
+  Domain = "ABACBS",
+  Stream = list(
+    c("AI and Machine Learning in Genomics")
+  ),
+  Abstract = list(
+    tags$body(
+      tags$p(
+        "During this workshop we will use two publicly available large 
+      pharmacogenomic datasets: the Cancer Cell Line Encyclopedia (CCLE) and 
+      Genomics of Drug Sensitivity in Cancer (GDSC) to bridge alternations in 
+      gene expression to the drug response, to answer the question whether an 
+      individual will respond well to a treatment; before starting the 
+      treatment.The workshop will be implemented in two steps:"
+      ),
+      tags$ol(
+        tags$li(
+          tags$strong(
+            "Supervised Learning for Biomarker Prediction and Selection: "
+          ),
+          "We will  use regularization-based machine learning models; such as 
+          Ridge Regression and ElasticNet Regression alongside Linear Regression
+          to identify biomarker genes with highest predictive power for drug 
+        (e.g. Docataxel) sensitivity."
+        ),
+        tags$li(
+          tags$strong(
+            "Unsupervised Learning for Patient Clustering: "
+          ),
+          "Using a publicly available patient gene expression dataset (e.g. 
+        colon adenocarcinoma) from TCGA database, we will cluster patients into 
+        two clusters “Drug-Resistant” and “Drug-Sensitive” based on the 
+        biomarkers predicted by our machine learning model in the first part."
+        )
+      )
+    )
+  )
+)
+cain <- list(
+  Start = "2025-11-28 09:00:00",  
+  End = "2025-11-28 10:30:00", 
+  Break = 0,
+  Title = "ATAClone: cancer clone identification and copy number estimation from single-cell ATAC-seq",
+  Presenter = list(
+    c("Lachlan Cain1", 'Sanduni Rajapaksa1')
+  ),
+  Institution = list(
+    "Peter MacCallum Cancer Centre"
+  ),
+  Domain = "BiocAsia",
+  Stream = list(
+    c("Single-Cell Omics")
+  ),
+  Abstract = list(
+    tags$body(
+      tags$p(
+        "Single-cell analyses of cancer typically begin by identifying distinct 
+        populations of cancer cells by unsupervised clustering. However, in 
+        many cases this clustering is explained simply by differences in the 
+        copy number. To detect and estimate these differences in copy number, 
+        we have developed ATAClone. Applicable to both standalone and multiome 
+        scATAC-seq assays, ATAClone first identifies cancer ‘clones’ with 
+        shared copy number profiles, then estimates the copy number of each 
+        clone jointly. Advantages over other single-cell copy number calling 
+        tools include automated clone identification as well as ploidy-aware 
+        copy number estimation. In this workshop, participants will be guided 
+        step-by-step through a typical ATAClone workflow including key 
+        considerations at each analysis stage, as well as examples of 
+        downstream analyses using ATAClone outputs."
+      )
+    )
+  )
+)
+chen <- list(
+  Start = "2025-11-28 11:00:00",  
+  End = "2025-11-28 12:30:00", 
+  Break = 0,
+  Title = "Advanced Marker Identification and Data Analysis with mastR and smartid",
+  Presenter = list(
+    c("Jinjin Chen1", "Chin Wee Tan1")
+  ),
+  Institution = list(
+    c("Bioinformatics Division of Walter and Eliza Hall Institute of Medical Research")
+  ),
+  Domain = "BiocAsia",
+  Stream = list(
+    c("Single-Cell Omics")
+  ),
+  Abstract = list(
+    tags$body(
+      tags$p(
+        "This workshop is designed for users who want to learn how to use mastR 
+        and smartid for biomarker discovery on transcriptomic data. mastR 
+        (Chen et al Bioinformatics 2025, 41(3):btaf114) is an R package 
+        enabling automated marker screening across multiple groups, combine 
+        results from different differential expression comparisons, and apply 
+        filters to reduce background noise from unrelated tissues. With smartid, 
+        we’ll explore its TF‐IDF‐based approach to ranking markers, which is 
+        particularly useful for identifying genes linked to small or rare 
+        populations from imbalanced data."
+      ),
+      tags$p(
+        "This workshop will introduce the key workflows of the two packages, 
+        look at practical tips, common pitfalls, including a few examples for 
+        using of these tools. By the end of the session, participants should be 
+        able to run both packages confidently and know how to integrate their 
+        results into a broader analysis workflow. (mastr: ",
+        tags$a(
+          href = "https://bioconductor.org/packages/release/bioc/html/mastR.html",
+          "https://bioconductor.org/packages/release/bioc/html/mastR.html"
+        ),
+        " & smartid: ",
+        tags$a(
+          href = "https://bioconductor.org/packages/release/bioc/html/smartid.html",
+          "https://bioconductor.org/packages/release/bioc/html/smartid.html"
+        ),
+        ")"
+      )
+    )
+  )
+)
+liang <- list(
+  Start = "2025-11-28 13:30:00",  
+  End = "2025-11-28 15:00:00", 
+  Break = 0,
+  Title = "Interpreting benchmarking results with BenchmarkInsights", 
+  Presenter = list(
+    c(
+      "Xiaoqi Cabiria Liang1,2,3", "Dario Strbenac1,2,3", "Yue Cao1,2,3", 
+      "Jean Yang1,2,3"
+    )
+  ), 
+  Institution = list(
+    c(
+      "School of Mathematics and Statistics, The University of Sydney, NSW 2006, Australia.",
+      "Sydney Precision Data Science Centre, The University of Sydney, NSW 2006, Australia",
+      "Charles Perkins Centre, The University of Sydney, NSW 2006, Australia."
+    )
+  ), 
+  Domain = "BiocAsia",
+  Stream = list(
+    c("Scalable Workflows & Compute Infrastructure")
+  ),
+  Abstract = list(
+    tags$body(
+      p(
+        "Benchmarking studies are critical for assessing method performance. 
+        This workshop is for researchers who want to learn different ways of 
+        visualising and comparing method performance after running a 
+        benchmarking study. It will use the benchmarkInsights module from our
+        R package BenchHub that provides a series of functions to visualise 
+        benchmarking results. The session will begin with a brief background 
+        on benchmarking metrics, followed by a hands-on session where 
+        participants will:"
+      ),
+      tags$ul(
+        tags$li("interact with benchmarkInsights class"),
+        tags$li("generate summary visualisation"),
+        tags$li("inspect method performance across methods and datasets"),
+        tags$li("identify robust methods")
+      )
+    )
+  )
+)
+bhuva <- list(
+  Start = "2025-11-28 09:00:00",  
+  End = "2025-11-28 12:30:00", 
+  Break = 30,
+  Title = "Introduction to spatial transcriptomics data analysis",
+  Presenter = list(
+    c(
+      "Dharmesh Bhuva1", "Jiadong Mao2", "Melody Jin3"
+    )
+  ),
+  Institution = list(
+    c(
+      "Frazer Institute, University of Queensland",
+      "Melbourne Integrative Genomics (MIG), University of Melbourne",
+      "Walter and Eliza Hall Institute of Medical Research"
+    )
+  ),
+  Domain = "BiocAsia",
+  Stream = list(c("Spatial Transcriptomics")),
+  Abstract = list(
+    tags$body(
+      tags$p(
+      "Spatial transcriptomics (ST) has enabled us to examine transcriptional 
+      activities of cells in complex tissue microenvironments. However, current 
+      workflows for ST data often involve fragmented pipelines with varying 
+      normalisation strategies, cell type identification methods and 
+      differential expression analyses. Our workshop addresses this critical 
+      need by leveraging latest bioinformatic method development for ST data:"
+      ),
+      tags$ul(
+        tags$li("Data normalisation with spaNorm"),
+        tags$li("Decoding cell states with Φ-Space"),
+        tags$li("Identify spatial differentially expressed genes with jazzPanda")
+      ),
+      tags$p(
+        "By bringing together experts and practitioners, we aim to move towards 
+        consensus on best practices that balance analytical rigour with 
+        biological interpretability, ultimately accelerating discoveries across
+        developmental biology, disease pathology and therapeutic development."
+      )
+    )
+  )
+)
+liu <- list(
+  Start = "2025-11-28 13:30:00",  
+  End = "2025-11-28 15:00:00", 
+  Break = 0,
+  Title = "Interrogating spatial transcriptomics: hands-on spatial domain, neighborhood & density analysis with DOMINO, hooscanR and scider.",
+  Presenter = list(
+    c("Ning Liu1", "Nora Liu1", "Monika Mohenska1", "Jose Polo1")
+  ),
+  Institution = list(
+    c("Adelaide Centre for Epigenetics, University of Adelaide" )
+  ),
+  Domain = "BiocAsia",
+  Stream = list(c("Spatial Transcriptomics")),
+  Abstract = list(
+    tags$body(
+      tags$p(
+        "Spatial transcriptomics (ST) data offer molecule position with 
+        quantitative gene expression in situ. Downstream analysis of ST data 
+        can be tailored to answer different biological questions, from 
+        identifying spatial domains, detecting spatial neighborhoods at 
+        single-cell level to quantifying cell-type-specific density landscapes."
+        ),
+      tags$p(
+        "In this workshop, we introduce three complementary Python and 
+        R/Bioconductor tools to tackle these questions. Through a guided 
+        workflow, participants will learn how to preprocess ST data, including 
+        performing quality control, data normalization and cell type annotation, 
+        configure parameters for each method, visualise results and interpret 
+        outputs in biological contexts such as tumor domains detection, cell 
+        neighborhood heterogeneity comparison and tumor density characterization."
+      ),
+      tags$p(
+        "By the end of the workshop, attendees will be equipped to integrate 
+        these methods into their own projects, allowing for reproducible, 
+        data-driven insights about complex tissue architectures."
+      )
+    )
+  )
+)
+  
+```
+
+
+```{r df}
+df <-list(
+  raisa, 
+  ont1, ont2, mgi, sarah, 
+  biocommons, wirth, 
+  borman, ryan, 
+  scdney, hutch, pratibha,
+  louie, elitok,
+  cain, chen, liang,
+  bhuva, liu
+) %>% 
+  lapply(as_tibble) %>% 
+  bind_rows() %>% 
+  mutate(
+    Start = as_datetime(Start),
+    End = as_datetime(End),
+    Day = wday(Start, label = TRUE, abbr = FALSE),
+    Break = minutes(Break),
+    Duration = (End - Break) - Start,
+  ) %>% 
+  arrange(Start, desc(End), Domain)
+```
+
+
+```{r tbl-workshop-schedule}
+#| results: asis
+tbl <- df %>% 
+  dplyr::select(
+    Day, Start, End, Domain, Stream, Title, Presenter, Institution
+  ) %>% 
+  mutate(
+    Presenter = lapply(Presenter, \(x) lapply(x, str_remove_all, "[0-9]")),
+    Institution = Institution %>% 
+      lapply(
+        \(x) {
+          lapply(x, str_remove_all, "[0-9]\\. ") %>% 
+            unlist() %>% 
+            str_split(pattern = ", ") %>% 
+            unlist() %>% 
+            unique()
+        }
+      )
+  ) %>% 
+  reactable(
+    filterable = TRUE, searchable = TRUE,
+    pagination = FALSE,
+    columns = list(
+      Day = colDef(
+        maxWidth = 80,
+        filterInput = \(values) drop_filter(values, "Day", id = "tbl-workshop-schedule")
+      ),
+      Start = colDef(
+        cell = \(value) format(value, "%H:%M"),
+        maxWidth = 65
+      ),
+      End = colDef(
+        cell = \(value) format(value, "%H:%M"),
+        maxWidth = 65
+      ),
+      Domain = colDef(
+        "Domain", maxWidth = 80,
+        filterInput = \(values) drop_filter(unlist(values), "Domain", id = "tbl-workshop-schedule")
+      ),
+      Stream = colDef(
+        "Stream/Theme", html = TRUE,
+        cell = \(value) value |> unlist() |> str_remove_all(",") %>% paste(collapse = "<br>"),
+        filterInput = \(values) drop_filter(unlist(values), "Stream", id = "tbl-workshop-schedule")
+      ),
+      Title = colDef("Workshop Title"),
+      Presenter = colDef(
+        cell = \(value) value |> unlist() |> str_remove_all(",") %>% paste(collapse = "<br>"),
+        name = "Presenter(s)", html = TRUE,
+        maxWidth = 140
+      ),
+      Institution = colDef(
+        name = "Institution(s)",
+        filterInput = \(values) drop_filter(
+          unlist(values), "Institution", id = "tbl-workshop-schedule"
+        ),
+        show = FALSE
+      )
+    ),
+    details = row_details,
+    elementId = "tbl-workshop-schedule",
+    theme = reactableTheme(
+      style = list(fontSize = 14)
+    )
+  )
+cp <- tags$caption(
+  tags$em(
+    "
+    Full table showing all workshops. All columns are searchable.
+    Please click the arrows at the left to show the complete abstract as 
+    submitted with a full description of the session
+    "
+  )
+)
+browsable(tagList(cp, tbl))
+```
+
