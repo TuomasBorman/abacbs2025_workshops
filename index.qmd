@@ -1050,7 +1050,6 @@ bhuva <- list(
       need by leveraging latest bioinformatic method development for ST data:"
       ),
       tags$ul(
-        tags$li("Data normalisation with spaNorm"),
         tags$li("Decoding cell states with Φ-Space"),
         tags$li("Identify spatial differentially expressed genes with jazzPanda")
       ),
